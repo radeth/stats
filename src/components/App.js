@@ -9,69 +9,57 @@ class App extends React.Component {
       options: {
         chart: {
           zoom: {
-            enabled: true,
-            type: 'x',
-            zoomedArea: {
-              fill: {
-                color: '#90CAF9',
-                opacity: 0.4
-              },
-              stroke: {
-                color: '#0D47A1',
-                opacity: 0.4,
-                width: 1
-              }
-            }
+            type: 'x'
           }
         },
+        dataLabels: {
+          enabled: false
+        },
+        grid: {
+          xaxis: {
+            showLines: true
+          },
+          yaxis: {
+            showLines: true
+          },
+        },
         xaxis: {
-          categories: []
+          type: 'datetime',
         }
       },
-      series: [
-        {
-          name: "Aktywność",
-          data: []
-        }
-      ]
-    };
+      series: [{
+        data: []
+      }],
+    }
   }
   componentDidMount() {
-    let clientID = 2
+    let clientID = 3
     let clientData = []
     dataFromServer.forEach(element => {
       if (element.client_id == clientID && element.day !== null) {
         clientData.push(element)
       }
     })
+    console.log(clientData)
+    console.log(this.getSeries(clientData))
     this.setState({
-      options: {
-        xaxis: {
-          categories: this.getCategories(clientData)
-        }
-      },
-      series: [
-        {
-          data: this.getSeries(clientData)
-        }
-      ]
+      series:[{
+        data: this.getSeries(clientData)
+      }]
     })
-
+    
   }
+  // creating series servwer data
   getSeries(clientData) {
     let clientSeries = []
     clientData.forEach(element => {
-      clientSeries.push(element.total)
+      let series = {
+        x:`${element.month}/${element.day}/${element.year}`,
+        y: element.total
+      }
+      clientSeries.push(series)
     })
     return clientSeries
-  }
-  getCategories(clientData) {
-    let clientCategories = []
-    clientData.forEach(element => {
-      let category = `${element.year}/${element.month}/${element.day}`
-      clientCategories.push(category)
-    })
-    return clientCategories
   }
   render() {
     return (
