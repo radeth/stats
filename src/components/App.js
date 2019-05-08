@@ -1,77 +1,40 @@
 import React from 'react';
-import dataFromServer from './../fixtures/dataFromServer'
-import Chart from "react-apexcharts"
-
+import SelectClient from './SelectClient'
+import { connect } from "react-redux";
+import SelectActivity from './SelectActivity'
+import Chart from './ChartComponent'
 class App extends React.Component {
-  constructor() {
-    super()
-    this.state = {
-      options: {
-        chart: {
-          zoom: {
-            type: 'x'
-          }
-        },
-        dataLabels: {
-          enabled: false
-        },
-        grid: {
-          xaxis: {
-            showLines: true
-          },
-          yaxis: {
-            showLines: true
-          },
-        },
-        xaxis: {
-          type: 'datetime',
-        }
-      },
-      series: [{
-        data: []
-      }],
-    }
-  }
-  componentDidMount() {
-    let clientID = 3
-    let clientData = []
-    dataFromServer.forEach(element => {
-      if (element.client_id == clientID && element.day !== null) {
-        clientData.push(element)
-      }
-    })
-    console.log(clientData)
-    console.log(this.getSeries(clientData))
-    this.setState({
-      series:[{
-        data: this.getSeries(clientData)
-      }]
-    })
-    
-  }
-  // creating series servwer data
-  getSeries(clientData) {
-    let clientSeries = []
-    clientData.forEach(element => {
-      let series = {
-        x:`${element.month}/${element.day}/${element.year}`,
-        y: element.total
-      }
-      clientSeries.push(series)
-    })
-    return clientSeries
-  }
+  
   render() {
     return (
-      <div id="chart">
-        <Chart
-          options={this.state.options}
-          series={this.state.series}
-          type="scatter"
-          width="800"
-        />
+      <div className="container-flex p-1">
+        <div className="row">
+          <div className="col-4">
+            <SelectClient/>
+            {this.props.selectedClient?<SelectActivity/>:null}
+          </div>
+          <div className="col">
+          {this.props.selectedActivity?<Chart/>:null}
+          </div>
+        </div>
       </div>
     )
   }
 }
-export default App;
+const mapStateToProps = state =>{
+  console.log(state)
+  return{
+    selectedClient: state.selectedClient,
+    selectedActivity: state.selectedActivity
+  }
+}
+const mapDispatchToProps = dispach =>{
+  return{
+
+  }
+}
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App);
+
