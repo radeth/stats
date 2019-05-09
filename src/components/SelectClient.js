@@ -19,29 +19,31 @@ class SelectClient extends React.Component {
                     label: element.id
                 }
             })
+            options.push({
+                value:'all',
+                label:'all'
+            })
             this.setState({
                 clients_list: options
             })
         }).catch(error => console.log(error))
     }
-
     render() {
         return (
             <div className="row">
                 <div className="col text-center">
                     <Select
-                        onChange={selectedOption=>{
+                        onChange={selectedOption => {
                             this.props.selectClientAction(selectedOption.value)
                         }}
                         options={this.state.clients_list}
                     />
-                    <button type="button" className="btn btn-primary mt-5">wszyscy klienci</button>
                 </div>
             </div>
         )
     }
 }
- 
+
 const mapStateToProps = state => {
     return {
 

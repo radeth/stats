@@ -17,7 +17,7 @@ class SelectActivity extends React.Component {
             <div className="row">
                 <div className="col">
                     <button onClick={() => {
-                        this.props.activityAction('all')
+                        this.props.setActivity('general')
                     }} type="button" className="btn btn-secondary m-1">Ogólna aktywność</button>
                 </div>
             </div>
@@ -33,7 +33,7 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = dispach => {
     return {
-        activityAction: (actionType) => {
+        setActivity: (actionType) => {
             dispach(activityAction(actionType))
         }
     }
