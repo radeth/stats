@@ -26,6 +26,9 @@ class ChartComponent extends React.Component {
                 },
                 xaxis: {
                     type: 'datetime',
+                    labels:{
+                        format:'yyyy/M/dd/H'
+                    }
                 }
             },
             series: [{
@@ -46,7 +49,7 @@ class ChartComponent extends React.Component {
                 <Chart
                     options={this.state.options}
                     series={this.state.series}
-                    type="scatter"
+                    type="column"
                 />
             </div>
 
