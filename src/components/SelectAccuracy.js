@@ -18,7 +18,7 @@ class SelectAccuracy extends React.Component {
                 <h2>Dokładnośc</h2>
                     <button onClick={() => {
                         this.props.setAccuracy('month')
-                    }} type="button" className="btn btn-secondary m-1">Miesięcnza</button>
+                    }} type="button" className="btn btn-secondary m-1">Miesięczna</button>
                     <button onClick={() => {
                         this.props.setAccuracy('day')
                     }} type="button" className="btn btn-secondary m-1">Według Dnia</button>

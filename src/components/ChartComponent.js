@@ -61,7 +61,7 @@ class ChartComponent extends React.Component {
                     window.alert('brak danych')
                 }
                 let series = response.data.map(element => {
-                    let date = new Date(element.year, element.month, element.day, element.hour).getTime()
+                    let date = new Date(element.year, element.month-1, element.day, element.hour).getTime()
                     return {
                         x: date,
                         y: element.total
