@@ -7,7 +7,7 @@ class ChartComponent extends React.Component {
     constructor() {
         super()
         this.state = {
-            chartType: 'line',
+            message: null,
             options: {
                 chart: {
                     type: 'scatter',
@@ -17,33 +17,49 @@ class ChartComponent extends React.Component {
                         enabled: false
                     }
                 },
-                legend: {
-                    show: true
-                },
+
                 xaxis: {
-                    type: 'datetime'
+                    type: 'datetime',
+                    label:{
+                        formatter: function (value, timestamp) {
+                            return new Date(timestamp) // The formatter function overrides format property
+                          }, 
+                    }
                 },
                 yaxis: {
-                    min: 0,
-                    max: 30
+                    forceNiceScale: true
                 },
+                dataLabels: {
+                    enabled: true
+                },
+                markers: {
+                    size: 5,
+                }
             },
             series: [
-                {
-                    name: '',
-                    data: []
-                }
-            ]
+
+            ],
+
         }
+
     }
     setChartData() {
         if (this.props.clientId === 'all') {
-         
+            this.setClientsIds()
         } else {
+            this.setState({
+                series: []
+            })
             Axios.post('http://localhost:8090/front/users_activity', {
                 clientId: this.props.clientId,
-                accuracy: this.props.accuracyType
+                accuracy: this.props.accuracyType,
+                month: this.props.accuracyType === "hour" ? this.props.range.month : null,
+                year: this.props.accuracyType === "hour" ? this.props.range.year : null,
+                day: this.props.accuracyType === "hour" ? this.props.range.day : null,
             }).then(response => {
+                if(response.data.length ===0){
+                    window.alert('brak danych')
+                }
                 let series = response.data.map(element => {
                     let date = new Date(element.year, element.month, element.day, element.hour).getTime()
                     return {
@@ -53,7 +69,7 @@ class ChartComponent extends React.Component {
                 })
                 this.setState({
                     series: [{
-                        name: `Aktywność klienta: ${this.props.clientId}`,
+                        name: this.setClientName(this.props.clientId),
                         data: series
                     }]
                 })
@@ -61,9 +77,59 @@ class ChartComponent extends React.Component {
         }
 
     }
+    setClientsIds() {
+        Axios.post('http://localhost:8090/front/clients_list').then(response => {
+            let clientsIds = response.data.map(element => {
+                return element.id
+            })
+            this.setChartDataAllCLients(clientsIds)
+        }).catch(error => console.log(error))
+    }
+    setChartDataAllCLients(clientsIds) {
+        this.setState({
+            series: []
+        })
+        clientsIds.forEach(id => {
+            Axios.post('http://localhost:8090/front/users_activity', {
+                clientId: id,
+                accuracy: this.props.accuracyType,
+                month: this.props.accuracyType === "hour" ? this.props.range.month : null,
+                year: this.props.accuracyType === "hour" ? this.props.range.year : null,
+                day: this.props.accuracyType === "hour" ? this.props.range.day : null,
+            }).then(response => {
+                let clientSeries = response.data.map(element => {
+                    let date = new Date(element.year, element.month, element.day, element.hour).getTime()
+                    return {
+                        x: date,
+                        y: element.total
+                    }
+                })
+                this.setState({
+                    series: [
+                        ...this.state.series,
+                        {
+                            name: this.setClientName(id),
+                            data: clientSeries
+                        }
+
+                    ]
+                })
+            }).catch(error => console.log(error))
+
+        });
+    }
+    setClientName(id) {
+        let name
+        this.props.clientsList.forEach(element => {
+            if (element.value === id) { 
+                name = element.label }
+        })
+        return name
+    }
     render() {
         return (
             <div>
+
                 <div className="alert alert-primary">
                     Klient: {this.props.clientId}
                 </div>
@@ -73,8 +139,11 @@ class ChartComponent extends React.Component {
                 <div className="alert alert-warning" >
                     Dokładność: {this.props.accuracyType}
                 </div>
-                <button type="button" onClick={() => this.setChartData()} className="btn btn-primary m-2">Generuj Wykres</button>
-                <Chart options={this.state.options} series={this.state.series} type={this.state.chartType} height="350" />
+                <button type="button" onClick={() => {
+                    this.setChartData()
+                    this.forceUpdate()
+                }} className="btn btn-primary m-2">Generuj Wykres</button>
+                <Chart options={this.state.options} series={this.state.series} height="350" />
             </div>
 
         )
@@ -86,7 +155,9 @@ const mapStateToProps = state => {
     return {
         clientId: state.selectedClient,
         activityType: state.selectedActivity,
-        accuracyType: state.selectedAccuracy
+        accuracyType: state.selectedAccuracy,
+        range: state.selectedRange,
+        clientsList: state.clientsList
     }
 }
 const mapDispatchToProps = dispach => {

@@ -2,9 +2,10 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## TODO's
 
-- wybór klienta lub wszyskich klientów
-- wybór typów aktywności
-- wybór typu wykresu
+- oś Y min max
+- filtrowanie godzinowe dla wszystkich klientów
+- przesunięci w miesiącach wybów godzinowy
+
 
 ## Available Scripts
 

@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import Axios from 'axios'
 import Select from 'react-select';
 import selectClientAction from "../redux/actions/clientAction"
-
+import listAction from './../redux/actions/listAction'
 class SelectClient extends React.Component {
     constructor() {
         super()
@@ -13,21 +13,24 @@ class SelectClient extends React.Component {
     }
     componentDidMount() {
         Axios.post('http://localhost:8090/front/clients_list').then(response => {
-            let options = response.data.map(element => {
+            let list = response.data.map(element => {
                 return {
                     value: element.id,
-                    label: element.id
+                    label: element.clientName
                 }
             })
-            options.push({
-                value:'all',
-                label:'all'
+            this.props.listAction(list)
+            list.push({
+                value: 'all',
+                label: 'all'
             })
             this.setState({
-                clients_list: options
+                clients_list: list
             })
+           
         }).catch(error => console.log(error))
     }
+    
     render() {
         return (
             <div className="row">
@@ -53,7 +56,11 @@ const mapDispatchToProps = dispach => {
     return {
         selectClientAction: (clientId) => {
             dispach(selectClientAction(clientId))
+        },
+        listAction: (list) => {
+            dispach(listAction(list))
         }
+
     }
 }
 export default connect(

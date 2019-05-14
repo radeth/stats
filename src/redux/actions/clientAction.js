@@ -1,4 +1,4 @@
-export function selectClientAction(clientId){
+export default function selectClientAction(clientId){
     return{
         type:"SELECT_CLIENT",
         payload: clientId

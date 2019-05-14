@@ -1,5 +1,4 @@
 function accuracyAction(accuracyType){
-    console.log(accuracyType)
     return{
         type:"SELECT_ACCURACY",
         payload:accuracyType
