@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from "react-redux";
 import Chart from 'react-apexcharts'
 import Axios from 'axios';
-
+import {clientsListUrl,usersActivityUrl} from './../urlsMix'
 class ChartComponent extends React.Component {
     constructor() {
         super()
@@ -50,7 +50,7 @@ class ChartComponent extends React.Component {
             this.setState({
                 series: []
             })
-            Axios.post('http://localhost:8090/front/users_activity', {
+            Axios.post(usersActivityUrl, {
                 clientId: this.props.clientId,
                 accuracy: this.props.accuracyType,
                 month: this.props.accuracyType === "hour" ? this.props.range.month : null,
@@ -78,7 +78,7 @@ class ChartComponent extends React.Component {
 
     }
     setClientsIds() {
-        Axios.post('http://localhost:8090/front/clients_list').then(response => {
+        Axios.post(clientsListUrl).then(response => {
             let clientsIds = response.data.map(element => {
                 return element.id
             })
@@ -90,7 +90,7 @@ class ChartComponent extends React.Component {
             series: []
         })
         clientsIds.forEach(id => {
-            Axios.post('http://localhost:8090/front/users_activity', {
+            Axios.post(usersActivityUrl, {
                 clientId: id,
                 accuracy: this.props.accuracyType,
                 month: this.props.accuracyType === "hour" ? this.props.range.month : null,

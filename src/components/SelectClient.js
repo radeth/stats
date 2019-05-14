@@ -4,15 +4,17 @@ import Axios from 'axios'
 import Select from 'react-select';
 import selectClientAction from "../redux/actions/clientAction"
 import listAction from './../redux/actions/listAction'
+import {clientsListUrl} from './../urlsMix'
 class SelectClient extends React.Component {
     constructor() {
         super()
         this.state = {
             clients_list: []
         }
+        console.log(clientsListUrl)
     }
     componentDidMount() {
-        Axios.post('http://localhost:8090/front/clients_list').then(response => {
+        Axios.post(clientsListUrl).then(response => {
             let list = response.data.map(element => {
                 return {
                     value: element.id,
